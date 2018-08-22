@@ -29,12 +29,14 @@ exports.noti = functions.database.ref('/UserLocation/{UID}/{pushId}/')
       const uppercase = "100";
   
       var ref = admin.database().ref(`Users/${context.params.UID}/playerId`);
+      var safetyInfo = "되어있음"
+      var enteredTime = "~"
       return ref.once("value", function(snapshot){
       
           const payload = {
                 notification: {
-                  title: 'You have been invited to a trip.',
-                  body: 'Tap here to check it out!'
+                  title: '들어온 시간 : ' + enteredTime,
+                  body: '내진설계 여부 :' +safetyInfo + '\n자세한 건물 정보를 보려면 탭하세요.'
                 }
               };
               console.log(snapshot.val())

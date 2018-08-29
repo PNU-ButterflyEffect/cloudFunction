@@ -19,19 +19,38 @@ admin.initializeApp();
   });
 });*/
 
+const haversine = require('haversine') 
 // Listens for new messages added to /messages/:pushId/original and creates an
 // uppercase version of the message to /messages/:pushId/uppercase
 exports.noti = functions.database.ref('/UserLocation/{UID}/{pushId}/')
     .onCreate((snapshot, context) => {
+      
       // Grab the current value of what was written to the Realtime Database.
       const original = snapshot.val();
       //console.log('Uppercasing', context.params.UID, context.params.pushId, original);
+      
+      const start = {
+        latitude: original.latitude,
+        longitude: original.longitude
+      }
+      
+      const end = {
+        latitude: 27.950575,
+        longitude: -82.457178
+      }
+      
+      console.log(haversine(start, end, {unit: 'meter'}))
       const uppercase = "100";
   
       var ref = admin.database().ref(`Users/${context.params.UID}/playerId`);
-      var ref = admin.database().ref('building_info');
+      var ref2 = admin.database().ref('building_info');
+      
       var safetyInfo = "되어있음"
       var enteredTime = "~"
+      
+      ref2.once("value", function(snapshot){
+        console.log(snapshot.val()
+      })
       return ref.once("value", function(snapshot){
           const payload = {
                 notification: {

@@ -22,10 +22,10 @@ var building_info = null
 var seismicDesign = null // 내진설계여부
 var address = null
 var safetyInfo =null
-var minMeter = 1000000
+var minMeter = 10 // 10meter
 const haversine = require('haversine') 
-// Listens for new messages added to /messages/:pushId/original and creates an
-// uppercase version of the message to /messages/:pushId/uppercase
+
+
 exports.noti = functions.database.ref('/UserLocation/{UID}/{pushId}/')
     .onCreate((snapshot, context) => {
       
@@ -66,7 +66,7 @@ exports.noti = functions.database.ref('/UserLocation/{UID}/{pushId}/')
             end['longitude'] = tmp['longitude']
             seismicDesign = building_info[x]['내진설계여부']
             address = building_info[x]['주소']
-            console.log(minMeter)
+            //console.log(minMeter)
           }
         }
       })

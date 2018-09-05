@@ -22,9 +22,8 @@ var building_info = null
 var seismicDesign = null // 내진설계여부
 var address = null
 var safetyInfo =null
-var minMeter = 10 // 10meter
+var minMeter = 100 // 10meter
 const haversine = require('haversine') 
-
 
 exports.noti = functions.database.ref('/UserLocation/{UID}/{pushId}/')
     .onCreate((snapshot, context) => {
@@ -75,21 +74,24 @@ exports.noti = functions.database.ref('/UserLocation/{UID}/{pushId}/')
         safetyInfo = "되어있음"
       } else if(seismicDesign === 'X'){
         safetyInfo = "되어있지않음"
+      } else if(seismicDesign == null){
+        seismicDesign = seismicDesign // 넌너고 난나야
       }else{
         safetyInfo = "정보없음"
       } 
       console.log("최소 거리 : " + minMeter)
       return ref.once("value", function(snapshot){
-        const payload = {
+          if(seismicDesign != null){
+            const payload = {
               notification: {
                 title: '들어온 시간 : ' + original.createdTime  ,
                 body: '내진설계 여부 :' + safetyInfo + '\n자세한 건물 정보를 보려면 탭하세요.'+ "\n" + address
               }
             };
             //console.log(snapshot.val())
-        admin.messaging().sendToDevice(snapshot.val(), payload)
-    
-            },
+            admin.messaging().sendToDevice(snapshot.val(), payload)
+          }
+        },
         function (errorObject) {
             console.log("The read failed: " + errorObject.code);
       });

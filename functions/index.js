@@ -70,9 +70,9 @@ exports.noti = functions.database.ref('/UserLocation/{UID}/{pushId}/')
       }
       
       if(seismicDesign === 'O'){
-        safetyInfo = "되어있음"
+        safetyInfo = "내진설계가 되어있습니다."
       } else if(seismicDesign === 'X'){
-        safetyInfo = "되어있지않음"
+        safetyInfo = "내진설계가 되어있지않습니다."
       } else if(seismicDesign == null){
         seismicDesign = seismicDesign // 넌너고 난나야
       }else{
@@ -84,7 +84,7 @@ exports.noti = functions.database.ref('/UserLocation/{UID}/{pushId}/')
             const payload = {
               notification: {
                 title: '들어온 시간 : ' + original.createdTime  ,
-                body: '내진설계 여부 :' + safetyInfo + '\n자세한 건물 정보를 보려면 탭하세요.'+ "\n" + address
+                body: safetyInfo + '\n자세한 건물 정보를 보려면 탭하세요.'+ "\n" + address.split('/')[1]
               }
             };
             //console.log(snapshot.val())

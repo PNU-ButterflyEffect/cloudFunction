@@ -24,7 +24,10 @@ var address = null
 var safetyInfo =null
 var minMeter = 100 // 10meter
 const haversine = require('haversine') 
-
+var ref2 = admin.database().ref('building_info');
+ref2.once("value", function(snapshot){
+  building_info = snapshot.val()
+})
 exports.noti = functions.database.ref('/UserLocation/{UID}/{pushId}/')
     .onCreate((snapshot, context) => {
       
@@ -48,28 +51,24 @@ exports.noti = functions.database.ref('/UserLocation/{UID}/{pushId}/')
       }
       
       var ref = admin.database().ref(`Users/${context.params.UID}/playerId`);
-      var ref2 = admin.database().ref('building_info');
       
-      ref2.once("value", function(snapshot){
-        building_info = snapshot.val()
-        for(x in building_info){    
-          //console.log(x['EPSG_4326_Y'] + " / " + tmp['longitude'])
-          tmp['latitude'] = building_info[x]['EPSG_4326_Y']
-          tmp['longitude'] = building_info[x]['EPSG_4326_X']
-          var result = haversine(start, tmp, {unit: 'meter'})
-          //console.log("내진설계여부 : " + result + "/" + minMeter)
-          //console.log(result < minMeter)
-          if(result < minMeter){
-            minMeter = result
-            end['latitude'] = tmp['latitude']
-            end['longitude'] = tmp['longitude']
-            seismicDesign = building_info[x]['내진설계여부']
-            address = building_info[x]['주소']
-            //console.log(minMeter)
-          }
+      for(x in building_info){    
+        //console.log(x['EPSG_4326_Y'] + " / " + tmp['longitude'])
+        tmp['latitude'] = building_info[x]['EPSG_4326_Y']
+        tmp['longitude'] = building_info[x]['EPSG_4326_X']
+        var result = haversine(start, tmp, {unit: 'meter'})
+        //console.log("내진설계여부 : " + result + "/" + minMeter)
+        //console.log(result < minMeter)
+        if(result < minMeter){
+          minMeter = result
+          end['latitude'] = tmp['latitude']
+          end['longitude'] = tmp['longitude']
+          seismicDesign = building_info[x]['내진설계여부']
+          address = building_info[x]['주소']
+          //console.log(minMeter)
         }
-      })
-
+      }
+      
       if(seismicDesign === 'O'){
         safetyInfo = "되어있음"
       } else if(seismicDesign === 'X'){
